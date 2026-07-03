@@ -1,0 +1,4 @@
+Kivy
+peewee
+psycopg2-binary
+pygame
