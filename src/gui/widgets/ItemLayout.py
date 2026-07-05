@@ -5,7 +5,7 @@ from kivy.uix.button import Button
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty
-from gui.BuyButton import BuyButton
+from gui.widgets.BuyButton import BuyButton
 from model import Item
 from helper import convertCentsToString
 import io

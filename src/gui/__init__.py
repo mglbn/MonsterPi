@@ -2,10 +2,10 @@ from .screens.CheckoutScreen import CheckoutScreen
 from .screens.LoginScreen import LoginScreen
 from .screens.MyScreenManager import MyScreenManager
 from .CustomDispatcher import CustomDispatcher
-from .GreetLabel import GreetLabel
-from .UserInfoLayout import UserInfoLayout
-from .ItemLayout import ItemLayout
-from .ItemScrollView import ItemScrollView
-from .BuyButton import BuyButton
+from .widgets.GreetLabel import GreetLabel
+from .widgets.UserInfoLayout import UserInfoLayout
+from .widgets.ItemLayout import ItemLayout
+from .widgets.ItemScrollView import ItemScrollView
+from .widgets.BuyButton import BuyButton
 
 

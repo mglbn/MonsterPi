@@ -2,7 +2,7 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.graphics import Color, RoundedRectangle
 from kivy.metrics import dp
-from gui.CheckoutModal import CheckoutModal
+from gui.widgets.CheckoutModal import CheckoutModal
 
 class BuyButton(Button):
     

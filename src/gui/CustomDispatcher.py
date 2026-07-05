@@ -3,7 +3,7 @@ from kivy.clock import Clock
 from helper import logger
 from controller import Controller
 from model import User, Item
-from gui.CheckoutModal import CheckoutModal
+from gui.widgets.CheckoutModal import CheckoutModal
 from gui.LoginTimer import LoginTimer
 
 

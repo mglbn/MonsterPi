@@ -5,7 +5,7 @@ from kivy.uix.label import Label
 from kivy.app import App
 from model import User
 from helper import logger, convertCentsToString
-from gui.LogoutButton import LogoutButton
+from gui.widgets.LogoutButton import LogoutButton
 
 
 
