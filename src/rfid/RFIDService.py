@@ -5,11 +5,11 @@ import time
 
 class RFIDService():
     
-    def __init__(self, callback, sleeptimer):
+    def __init__(self, callback, debouncetimer):
         self.reader = SimpleMFRC522()
         self.on_tag = callback
         self.running = False
-        self.sleeptimer = sleeptimer
+        self.debouncetimer = debouncetimer
 
     def start(self):
         # TODO GPIO noch sicherheitshalber frisch initieren
@@ -28,6 +28,6 @@ class RFIDService():
         while self.running:
             tag = self.reader.read()
             self.on_tag(tag)
-            time.sleep(self.sleeptimer)
+            time.sleep(self.debouncetimer)
         
         # TODO: GPIO wieder ordentlich hinterlassen

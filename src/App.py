@@ -22,7 +22,7 @@ class MonsterApp(App):
 
         self.config = {
             "loginErrorTime" : 3,
-            "loginTimeout" : 60
+            "loginTimeout" : 30
         }
 
         self.ev = CustomDispatcher(
@@ -30,7 +30,7 @@ class MonsterApp(App):
             loginTimeout=self.config["loginTimeout"]
             )       
 
-        self.rfidService = RFIDService(self.ev.rfidcallback, 2)
+        self.rfidService = RFIDService(self.ev.rfidcallback, debouncetimer=2)
         self.rfidService.start()
         logger.info("RFID Service gestartet")
         logger.info("Starte Frontend")

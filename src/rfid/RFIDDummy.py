@@ -5,11 +5,13 @@ import time
 
 
 class RFIDService():
+
+    _delay = 10
     
-    def __init__(self, callback, sleeptimer):
+    def __init__(self, callback, debouncetimer):
         self.on_tag = callback
         self.running = False
-        self.sleeptimer = sleeptimer
+        self.debouncetimer = debouncetimer + self._delay
         self.counter = 0
         self.dummy_tags: list = [
             ('1234','foobar'),
@@ -39,6 +41,6 @@ class RFIDService():
             tag = self.dummy_tags[self.counter % len(self.dummy_tags)]
             self.counter += 1
             self.on_tag(tag) # TODO --> im Callback auch eine Clock zur Abmeldung starten
-            time.sleep(self.sleeptimer)
+            time.sleep(self.debouncetimer)
         
        
