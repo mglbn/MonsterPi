@@ -4,7 +4,7 @@ from helper import logger
 from controller import Controller
 from model import User, Item
 from gui.widgets.CheckoutModal import CheckoutModal
-from gui.LoginTimer import LoginTimer
+from gui.events.LoginTimer import LoginTimer
 
 
 class CustomDispatcher(EventDispatcher):
