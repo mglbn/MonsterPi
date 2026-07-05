@@ -37,13 +37,12 @@ class UserInfoLayout(BoxLayout):
         self.add_widget(self.button_wrapper)
 
         App.get_running_app().ev.bind(
-            on_login=self.on_login,
+            on_login=self.on_login_or_on_item_bought,
+            on_item_bought=self.on_login_or_on_item_bought,
             on_logout=self.on_logout
         )
 
-
-
-    def on_login(self, *args, **kwargs):
+    def on_login_or_on_item_bought(self, *args, **kwargs):
         user: User = kwargs.get("user")
         if user:
             self._display_user(user)

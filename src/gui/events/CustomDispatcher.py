@@ -48,7 +48,7 @@ class CustomDispatcher(EventDispatcher):
             logger.info(f"User mit Tag {tag_id} will bezahlen")
             is_payed = Controller.payForItem(tag_id)
             if is_payed:
-                self.dispatch('on_item_bought')
+                self.dispatch('on_item_bought', user=Controller.currentUser)
             else:
                 self.dispatch('on_item_bought_error')
             return

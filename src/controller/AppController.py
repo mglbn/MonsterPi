@@ -69,8 +69,6 @@ class AppController():
             timestamp = time.time()
         )
         purchase_entry.save()
-        self.currentUser = None
-        self.shoppingCard = None
         
 
         return success
