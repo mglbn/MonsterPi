@@ -27,7 +27,7 @@ class RFIDService():
     def _run(self):
         while self.running:
             tag = self.reader.read()
-            self.on_tag(tag) # TODO --> im Callback auch eine Clock zur Abmeldung starten
+            self.on_tag(tag)
             time.sleep(self.sleeptimer)
         
         # TODO: GPIO wieder ordentlich hinterlassen
