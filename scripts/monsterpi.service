@@ -6,19 +6,18 @@ After=network.target
 Type=simple
 User=kiosk
 Group=kiosk
-WorkingDirectory=/opt/kivyapp
+WorkingDirectory=/opt/MonsterPi
 
 EnvironmentFile=/etc/monsterpi.env
-cont
-ExecStart=/opt/kivyapp/venv/bin/python /opt/kivyapp/main.py
+ExecStart=/opt/MonsterPi/venv/bin/python /opt/MonsterPi/main.py
 Restart=always
 RestartSec=3
 
 # hardening
 NoNewPrivileges=true
-PrivateTmp=true
-ProtectSystem=strict
-ProtectHome=true
+#PrivateTmp=true
+#ProtectSystem=strict
+#ProtectHome=true
 ProtectKernelTunables=true
 ProtectKernelModules=true
 ProtectControlGroups=true
@@ -26,9 +25,9 @@ RestrictRealtime=true
 RestrictSUIDSGID=true
 LockPersonality=true
 MemoryDenyWriteExecute=true
-PrivateDevices=true
+#PrivateDevices=true
 
-ReadWritePaths=/opt/kivyapp/data
+ReadWritePaths=/opt/MonsterPi/
 
 CapabilityBoundingSet=
 AmbientCapabilities=
