@@ -58,17 +58,20 @@ class AppController():
             success = False
             return success
         
-        self.currentUser.balance -= self.shoppingCard.price
-        self.shoppingCard.inStock -= 1
-        self.currentUser.save()
-        self.shoppingCard.save()
-        purchase_entry = Purchase.create(
-            user = self.currentUser,
-            item = self.shoppingCard,
-            price = self.shoppingCard.price,
-            timestamp = time.time()
-        )
-        purchase_entry.save()
+        with db.atomic():
+            self.currentUser.balance -= self.shoppingCard.price
+            self.shoppingCard.inStock -= 1
+            self.currentUser.save()
+            self.shoppingCard.save()
+            purchase_entry = Purchase.create(
+                user = self.currentUser,
+                item = self.shoppingCard,
+                price = self.shoppingCard.price,
+                timestamp = time.time()
+            )
+
+        self.shoppingCard = None
+
         
 
         return success
@@ -84,11 +87,12 @@ class AppController():
     
     def getAllItems4User(self, user: User):
         return (Item.select(Item)
-            .join(Purchase, JOIN.LEFT_OUTER)
-            .join(User, JOIN.LEFT_OUTER)
-            .where((User.id == user.id) | (User.id == None))
+            .join(Purchase, JOIN.LEFT_OUTER, on=
+                  (Purchase.item == Item.id) &
+                  (Purchase.user == user.id)
+                  )
             .group_by(Item)
-            .order_by(fn.COUNT(Item.id).desc())
+            .order_by(fn.COUNT(Purchase.id).desc())
             )
     
     
