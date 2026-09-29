@@ -16,7 +16,8 @@ class RFIDService():
         self.dummy_tags: list = [
             ('1234','foobar'),
             ('4567','barfoo'),
-            ('4567','barfoo')
+            ('4567','barfoo'),
+            ('0201','barfuss')
             
             ]
 
@@ -40,7 +41,7 @@ class RFIDService():
         while self.running:
             tag = self.dummy_tags[self.counter % len(self.dummy_tags)]
             self.counter += 1
-            self.on_tag(tag) # TODO --> im Callback auch eine Clock zur Abmeldung starten
+            self.on_tag(tag) 
             time.sleep(self.debouncetimer)
         
        

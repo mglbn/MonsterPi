@@ -37,7 +37,7 @@ class CustomDispatcher(EventDispatcher):
             self.dispatch('on_logout')
             user: User = Controller.loginUser(tag_id)
             if (user == None):
-                self.dispatch('on_login_error')
+                self.dispatch('on_login_error', tag_id=tag_id)
             else:
                 self.dispatch('on_login', user=user, items=Controller.getAllItems4User(user))
 

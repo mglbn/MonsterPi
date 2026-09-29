@@ -15,8 +15,9 @@ class GreetLabel(Label):
             on_cancel_login_error=self.on_cancel_login_error
         )
     
-    def on_login_error(self, *args):
-        self.text = "Fehler bei der Anmeldung"
+    def on_login_error(self, *args, **kwargs):
+        tag_id = kwargs.get('tag_id')
+        self.text = f'Fehler bei Chip: {tag_id}'
         self.color = 1,0,0,1
         pass
 
