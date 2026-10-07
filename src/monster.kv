@@ -1,26 +1,42 @@
 #:kivy 2.3.1
+
 <MyScreenManager>:
-    dispatcher: app.ev
+    session: app.vm.session
     LoginScreen:
     CheckoutScreen:
+
 
 <LoginScreen>:
     name: "LoginScreen"
     GreetLabel:
-        text: "Chip her!"
+        text: app.vm.session.greet
+        color: app.vm.session.greet_color
         font_size: "24sp"
-        dispatcher: app.ev
-
-
 
 
 <CheckoutScreen>:
     name: "CheckoutScreen"
-    dispatcher: app.ev
     BoxLayout:
         orientation: "vertical"
         UserInfoLayout:
         ItemScrollView:
-            dispatcher: app.ev
+            items: app.vm.items
+    
 
-        
+<UserInfoLayout>:
+    orientation: "horizontal"
+    size_hint: (1, .15)
+    Label:
+        text: "Hallo " + app.vm.session.username
+    Label:
+        text: app.vm.session.balance
+        color: (1, .5, .5, 1) if app.vm.session.balance_negative else (1, 1, 1, 1)
+    AnchorLayout:
+        anchor_y: "center"
+        LogoutButton:
+            session: app.vm.session
+            text: "Abmelden"
+            size_hint_y: 0.5
+            size_hint_x: 0.8
+            pos_hint: {"top": 0.5}
+            on_release: app.vm.session.logout()

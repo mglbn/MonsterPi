@@ -1,22 +1,14 @@
 from kivy.uix.screenmanager import ScreenManager
 from kivy.properties import ObjectProperty
-from model import *
+
 
 class MyScreenManager(ScreenManager):
 
-    dispatcher = ObjectProperty(None)       
-    
-    def on_dispatcher(self, instance, dispatcher):
-        dispatcher.bind(
-            on_login=self.on_login,
-            on_logout=self.on_logout
-        )
-    
-    def on_login(self, *args, **kwargs):
-        self.transition.direction = 'left'
-        self.current='CheckoutScreen'
+    session = ObjectProperty(None)
 
-    def on_logout(self, *args):
-        self.transition.direction = 'right'
-        self.current='LoginScreen'
+    def on_session(self, instance, session):
+        session.bind(active_screen=self._on_screen)
 
+    def _on_screen(self, session, screen):
+        self.transition.direction = 'left' if screen == 'CheckoutScreen' else 'right'
+        self.current = screen
