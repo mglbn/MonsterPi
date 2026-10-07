@@ -6,7 +6,7 @@ import time
 
 class RFIDService():
 
-    _delay = 10
+    _delay = 5
     
     def __init__(self, callback, debouncetimer):
         self.on_tag = callback
@@ -14,6 +14,7 @@ class RFIDService():
         self.debouncetimer = debouncetimer + self._delay
         self.counter = 0
         self.dummy_tags: list = [
+            ('1234','foobar'),
             ('1234','foobar'),
             ('4567','barfoo'),
             ('4567','barfoo')            

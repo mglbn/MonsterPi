@@ -72,6 +72,11 @@ class SessionViewModel(EventDispatcher):
         self._reset_greet()
         self.active_screen = "LoginScreen"
 
+    def notify_activity(self):
+        # Touch-Eingabe: laufenden Logout-Timer von vorn starten
+        if self._logout_event is not None:
+            self._start_login_timer(self._progress_duration)
+
     def _login(self, tag_id: str):
         user = self.service.login(tag_id)
         if user is None:

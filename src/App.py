@@ -44,6 +44,9 @@ class MonsterApp(App):
         def on_tag(tag):
             Clock.schedule_once(lambda dt: session_vm.on_tag(str(tag[0])))
 
+        #jede Touch-Eingabe startet den Logout-Timer neu
+        Window.bind(on_touch_down=lambda *args: session_vm.notify_activity())
+
         #ModalView gehoert nicht in den Widget-Baum: open() haengt es an das Window
         self.checkoutModal = CheckoutModal(
             checkout=session_vm.checkout,

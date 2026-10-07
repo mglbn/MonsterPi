@@ -7,7 +7,7 @@ Ausfuehren: env/Scripts/python.exe tests/test_schema_sync.py
 import sys
 sys.path.insert(0, 'src')
 
-from peewee import Model, CharField, IntegerField, SqliteDatabase
+from peewee import Model, CharField, IntegerField, BooleanField, SqliteDatabase
 
 from model import sync_schema
 
@@ -66,5 +66,25 @@ columns = {c.name for c in db.get_columns('users')}
 check('alt_rest' in columns, "DB-Spalte ohne Model-Feld bleibt unberuehrt")
 row = UserNeu.get(UserNeu.name == 'Test')
 check(row.plz == 12345, "Werte im neuen Feld lesbar")
+
+# 4. BooleanField mit default auf gefuellter Tabelle (Muster fuer User.isAdmin)
+class UserAdmin(Model):
+    """So sieht der neue Modellstand mit Admin-Flag aus."""
+    class Meta:
+        database = db
+        table_name = 'users'
+
+    name = CharField(null=True)
+    plz = IntegerField(null=True)
+    isAdmin = BooleanField(default=False)
+
+sync_schema([UserAdmin], db)
+columns = {c.name for c in db.get_columns('users')}
+check('isAdmin' in columns, "isAdmin als Spalte nachgezogen")
+check(UserAdmin.get(UserAdmin.name == 'Marius').isAdmin is False,
+      "Bestandserweiterung: alte Zeilen bekommen den Default")
+UserAdmin.create(name='Boss', isAdmin=True)
+check(UserAdmin.get(UserAdmin.name == 'Boss').isAdmin is True,
+      "isAdmin True/False les- und schreibbar")
 
 print("\nALLE SCHEMA-SYNC-TESTS BESTANDEN")
