@@ -1,6 +1,7 @@
 from kivy.app import App
 from kivy.core.window import Window
 from gui import CustomDispatcher
+from gui.coordinator import Coordinator
 from helper import logger
 from gui import MyScreenManager
 import model
@@ -25,10 +26,12 @@ class MonsterApp(App):
             "loginTimeout" : 30
         }
 
-        self.ev = CustomDispatcher(
-            loginErrorTimeout= self.config["loginErrorTime"],
+        self.ev = CustomDispatcher()
+        self.coordinator = Coordinator(
+            self.ev,
+            loginErrorTimeout=self.config["loginErrorTime"],
             loginTimeout=self.config["loginTimeout"]
-            )       
+        )
 
         self.rfidService = RFIDService(self.ev.rfidcallback, debouncetimer=2)
         self.rfidService.start()

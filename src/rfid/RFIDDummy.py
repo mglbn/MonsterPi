@@ -16,9 +16,7 @@ class RFIDService():
         self.dummy_tags: list = [
             ('1234','foobar'),
             ('4567','barfoo'),
-            ('4567','barfoo'),
-            ('0201','barfuss')
-            
+            ('4567','barfoo')            
             ]
 
 

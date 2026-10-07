@@ -1,10 +1,10 @@
 from kivy.clock import Clock
-from kivy.app import App
 from helper.logger import logger
 
 class LoginTimer():
 
-    def __init__(self):
+    def __init__(self, bus):
+        self.bus = bus
         self.event = None
 
     def start_or_reset_login_timer(self, timeout: int):
@@ -12,13 +12,11 @@ class LoginTimer():
         self.__start_timer(timeout)
 
         # Sende Event um Button Animation zu starten
-        App.get_running_app().ev.dispatch('on_timer_reset')
-        
-    def __start_timer(self, timeout: int):
-        ev = App.get_running_app().ev
+        self.bus.dispatch('on_timer_reset')
 
+    def __start_timer(self, timeout: int):
         # Sende Logout Event wenn timer feuert
-        self.event = Clock.schedule_once(lambda dt: ev.dispatch('on_logout'), timeout)
+        self.event = Clock.schedule_once(lambda dt: self.bus.dispatch('on_logout'), timeout)
         logger.debug(f"Login timeout startet ({timeout})")
 
     def cancel_timer(self):

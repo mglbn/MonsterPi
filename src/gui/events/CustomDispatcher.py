@@ -2,23 +2,26 @@ from kivy.event import EventDispatcher
 from kivy.clock import Clock
 from helper import logger
 from controller import Controller
-from model import User, Item
+from model import Item
 from gui.widgets.CheckoutModal import CheckoutModal
-from gui.events.LoginTimer import LoginTimer
 
 
 class CustomDispatcher(EventDispatcher):
+    """Eventbus zwischen RFID-Service, Controller und GUI.
+
+    Der Bus selbst enthält keine Logik; der Login- und Bezahl-Fluss liegt im
+    Coordinator (gui/coordinator.py). Die Default-Handler sind absichtlich leer.
+    TODO Schritt 2: Modal-Handling (on_BuyButton_release / on_CheckoutModal_dismiss)
+    in den CheckoutScreen verschieben.
+    """
 
     def __init__(self, **kwargs):
-        self.loginErrorTimeout = kwargs.pop("loginErrorTimeout", 5) # 5 Sekunden default wert, bestimmt wie lange der Anmeldefehler sichtbar ist.
-        self.loginTimeout = kwargs.pop("loginTimeout", 60)
-        self.login_timer = LoginTimer()
         self.register_event_type('on_tag')
         self.register_event_type('on_logout')
         self.register_event_type('on_login')
         self.register_event_type('on_login_error')
         self.register_event_type('on_cancel_login_error')
-        self.register_event_type('on_BuyButton_release') 
+        self.register_event_type('on_BuyButton_release')
         self.register_event_type('on_CheckoutModal_dismiss')
         self.register_event_type('on_item_bought')
         self.register_event_type('on_item_bought_error')
@@ -29,55 +32,38 @@ class CustomDispatcher(EventDispatcher):
         text = tag[1]
         tag_id = str(tag[0])
         Clock.schedule_once(lambda dt: self.dispatch('on_tag', tag_id, text))
-        
+
+    # --- Default-Handler: leer, der Bus relayt nur ---
 
     def on_tag(self, tag_id, text, *args):
-        logger.debug(f"Default Eventhandler für 'on_tag' {tag_id}")
-        #Login
-        if Controller.currentUser == None or Controller.currentUser.tag_id != tag_id:
-            self.dispatch('on_logout')
-            user: User = Controller.loginUser(tag_id)
-            if (user == None):
-                self.dispatch('on_login_error', tag_id=tag_id)
-            else:
-                self.dispatch('on_login', user=user, items=Controller.getAllItems4User(user))
+        pass
 
-            return        
-
-        #bezahle
-        if Controller.currentUser != None and Controller.currentUser.tag_id == tag_id and Controller.shoppingCard != None:
-            logger.info(f"User mit Tag {tag_id} will bezahlen")
-            is_payed = Controller.payForItem(tag_id)
-            if is_payed:
-                self.dispatch('on_item_bought', user=Controller.currentUser)
-            else:
-                self.dispatch('on_item_bought_error')
-            return
-            
-        logger.debug(f"Bekam Tag, aber weder login noch bezahle :/")
-        
-
-    def on_logout(self , *args):
-        logger.info(f"User wird abgemeldet")
-        Controller.logout()
-        
+    def on_logout(self, *args):
+        pass
 
     def on_login(self, *args, **kwargs):
-        self.login_timer.start_or_reset_login_timer(self.loginTimeout)
+        pass
 
     def on_login_error(self, *args, **kwargs):
-        logger.debug(f"Zeige Anmeldefehlermeldung für {self.loginErrorTimeout}")
-        Clock.schedule_once(lambda dt : self.dispatch('on_cancel_login_error'), self.loginErrorTimeout)
-        
+        pass
 
-    def on_cancel_login_error(self, *args, **kwargs):
-        logger.debug("Anmeldefehlermeldung gecancelt")
+    def on_cancel_login_error(self, *args):
+        pass
+
+    def on_item_bought(self, *args, **kwargs):
+        pass
+
+    def on_item_bought_error(self, *args, **kwargs):
+        pass
+
+    def on_timer_reset(self, *args, **kwargs):
+        pass
+
+    # --- Modal-Handling (wandert in Schritt 2 in den CheckoutScreen) ---
 
     def on_BuyButton_release(self, *args, **kwargs):
         item: Item = kwargs.pop('item')
-        logger.debug(f"BuyButton von Item {item.id} losgelassen, schedule timeout neu")
-        self.login_timer.start_or_reset_login_timer(self.loginTimeout)
-
+        logger.debug(f"BuyButton von Item {item.id} losgelassen")
         itemIsInShoppingcard: bool = Controller.checkoutItem(item)
         self.modal = CheckoutModal(
             size_hint=(.6,.8),
@@ -85,20 +71,9 @@ class CustomDispatcher(EventDispatcher):
             pos_hint={'center_x':.5, 'center_y': .5},
             auto_dismiss = True,
             funds= itemIsInShoppingcard
-
         )
         self.modal.open()
-        
+
     def on_CheckoutModal_dismiss(self, *args, **kwargs):
         logger.debug(f"CheckoutModal dismissed")
         Controller.reset_shoppingcard()
-        
-    def on_item_bought(self, *args, **kwargs):
-        logger.debug("Item erfolgreich gekauft")
-        self.login_timer.start_or_reset_login_timer(5)
-
-    def on_item_bought_error(self, *args, **kwargs):
-        logger.debug("Kauf fehlgeschlagen")
-
-    def on_timer_reset(self, *args, **kwargs):
-        pass   
