@@ -21,6 +21,7 @@ class CustomDispatcher(EventDispatcher):
         self.register_event_type('on_BuyButton_release') 
         self.register_event_type('on_CheckoutModal_dismiss')
         self.register_event_type('on_item_bought')
+        self.register_event_type('on_item_bought_error')
         self.register_event_type('on_timer_reset')
         super(CustomDispatcher, self).__init__(**kwargs)
 
@@ -95,6 +96,9 @@ class CustomDispatcher(EventDispatcher):
     def on_item_bought(self, *args, **kwargs):
         logger.debug("Item erfolgreich gekauft")
         self.login_timer.start_or_reset_login_timer(5)
+
+    def on_item_bought_error(self, *args, **kwargs):
+        logger.debug("Kauf fehlgeschlagen")
 
     def on_timer_reset(self, *args, **kwargs):
         pass   
