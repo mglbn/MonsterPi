@@ -41,9 +41,6 @@ class PurchaseService():
         logger.debug(f"User {self.currentUser} hat Item {self.selectedItem.id if self.selectedItem else None} im Warenkorb")
         return sufficientfunds
 
-    def reset_selection(self):
-        self.selectedItem = None
-
     def pay(self, tag_id: int) -> bool:
         success = True
         if not (self.currentUser and self.selectedItem):

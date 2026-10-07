@@ -50,9 +50,6 @@ class FakeService:
         self.selectedItem = item
         return True
 
-    def reset_selection(self):
-        self.selectedItem = None
-
     def pay(self, tag_id):
         self.selectedItem = None
         return True

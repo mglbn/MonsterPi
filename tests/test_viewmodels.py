@@ -59,9 +59,6 @@ class FakeService:
         self.selectedItem = item if ok else None
         return ok
 
-    def reset_selection(self):
-        self.selectedItem = None
-
     def pay(self, tag_id):
         item = self.selectedItem
         if item is None or item.inStock <= 0:

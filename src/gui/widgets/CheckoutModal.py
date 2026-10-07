@@ -1,6 +1,5 @@
 import io
 
-from kivy.app import App
 from kivy.uix.modalview import ModalView
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
