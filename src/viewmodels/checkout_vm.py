@@ -27,20 +27,23 @@ class CheckoutViewModel(EventDispatcher):
     def open(self, item_vm, funds: bool):
         self.item = item_vm
         self.title = f"{item_vm.flavor} - {item_vm.price_text}"
+        # hint/hint_color vor state setzen - das Modal liest beide
+        # synchron, sobald state feuert
         if funds:
-            self.state = self.CONFIRM
             self.hint = self.HINT_CONFIRM
             self.hint_color = [1, 1, 1, 1]
+            self.state = self.CONFIRM
         else:
-            self.state = self.NO_FUNDS
             self.hint = self.HINT_NO_FUNDS
             self.hint_color = [1, .5, .5, 1]
+            self.state = self.NO_FUNDS
         self.is_open = True
 
     def bought(self):
-        self.state = self.THANKS
+        # wie in open(): erst hint, dann state
         self.hint = self.HINT_THANKS
         self.hint_color = [.5, 1, .5, 1]
+        self.state = self.THANKS
 
     def close(self):
         self.state = self.HIDDEN
