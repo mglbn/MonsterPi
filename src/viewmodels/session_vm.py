@@ -20,6 +20,7 @@ class SessionViewModel(EventDispatcher):
 
     active_screen = StringProperty("LoginScreen")
     user_logged_in = BooleanProperty(False)
+    user_is_admin = BooleanProperty(False)
     greet = StringProperty(GREET_DEFAULT)
     greet_color = ListProperty([1, 1, 1, 1])
     username = StringProperty(NAME_DEFAULT)
@@ -66,6 +67,7 @@ class SessionViewModel(EventDispatcher):
         self._stop_login_timer()
         self._cancel_greet_error()
         self.user_logged_in = False
+        self.user_is_admin = False
         self.username = self.NAME_DEFAULT
         self.balance = convertCentsToString(0)
         self.balance_negative = False
@@ -76,6 +78,16 @@ class SessionViewModel(EventDispatcher):
         # Touch-Eingabe: laufenden Logout-Timer von vorn starten
         if self._logout_event is not None:
             self._start_login_timer(self._progress_duration)
+
+    def enter_admin(self):
+        # nur mit Flag, offenes Checkout wird nicht mitgenommen
+        if not self.user_is_admin:
+            return
+        self.checkout.close()
+        self.active_screen = "AdminScreen"
+
+    def leave_admin(self):
+        self.active_screen = "CheckoutScreen"
 
     def _login(self, tag_id: str):
         user = self.service.login(tag_id)
@@ -88,6 +100,7 @@ class SessionViewModel(EventDispatcher):
             return
 
         self.user_logged_in = True
+        self.user_is_admin = user.isAdmin
         self.username = user.firstname
         self._display_balance(user)
         self.items.load(user)

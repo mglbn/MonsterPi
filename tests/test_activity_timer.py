@@ -18,6 +18,7 @@ class FakeUser:
     firstname = 'User1111'
     balance = 500
     dispo = -500
+    isAdmin = False
 
 
 class FakeItem:

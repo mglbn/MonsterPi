@@ -4,6 +4,7 @@
     session: app.vm.session
     LoginScreen:
     CheckoutScreen:
+    AdminScreen:
 
 
 <LoginScreen>:
@@ -32,6 +33,16 @@
         text: app.vm.session.balance
         color: (1, .5, .5, 1) if app.vm.session.balance_negative else (1, 1, 1, 1)
     AnchorLayout:
+        anchor_x: "center"
+        anchor_y: "center"
+        RoundedButton:
+            text: "Admin"
+            opacity: 1 if app.vm.session.user_is_admin else 0
+            disabled: not app.vm.session.user_is_admin
+            size_hint_x: 0.8
+            size_hint_y: 0.5
+            on_release: app.vm.session.enter_admin()
+    AnchorLayout:
         anchor_y: "center"
         LogoutButton:
             session: app.vm.session
@@ -40,3 +51,27 @@
             size_hint_x: 0.8
             pos_hint: {"top": 0.5}
             on_release: app.vm.session.logout()
+
+
+<AdminScreen>:
+    name: "AdminScreen"
+    BoxLayout:
+        orientation: "vertical"
+        padding: 24
+        spacing: 12
+        Label:
+            text: "Admin-Menue"
+            font_size: "24sp"
+            size_hint_y: .1
+        Button:
+            text: "Guthaben verwalten"
+            size_hint_y: .2
+            on_release: hint.text = "Guthaben verwalten: noch nicht implementiert"
+        Label:
+            id: hint
+            text: ""
+            size_hint_y: .1
+        Button:
+            text: "Zurueck"
+            size_hint_y: .1
+            on_release: app.vm.session.leave_admin()

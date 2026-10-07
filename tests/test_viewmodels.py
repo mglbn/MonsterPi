@@ -24,7 +24,7 @@ class FakeItem:
 
 
 class FakeUser:
-    def __init__(self, tid, balance=500, dispo=-500):
+    def __init__(self, tid, balance=500, dispo=-500, isAdmin=False):
         self.id = int(tid)
         self.tag_id = tid
         self.firstname = 'User' + tid
@@ -33,6 +33,7 @@ class FakeUser:
         self.lastLogon = 0
         self.balance = balance
         self.dispo = dispo
+        self.isAdmin = isAdmin
     def __repr__(self):
         return f'FakeUser({self.tag_id})'
 
@@ -41,7 +42,7 @@ class FakeService:
     """In-Memory-Fassade der PurchaseService-API."""
 
     def __init__(self):
-        self.users = {'1111': FakeUser('1111'), '2222': FakeUser('2222', balance=50)}
+        self.users = {'1111': FakeUser('1111', isAdmin=True), '2222': FakeUser('2222', balance=50)}
         self.items = [FakeItem(1), FakeItem(2, inStock=1)]
         self.currentUser = None
         self.selectedItem = None
@@ -103,6 +104,11 @@ check(session.active_screen == 'CheckoutScreen', "Login: Screenwechsel zu Checko
 check(session.user_logged_in, "Login: user_logged_in gesetzt")
 check(session.username == 'User1111', "Login: Username angezeigt")
 check(svc.users['1111'].lastLogon > 0, "Login: lastLogon festgehalten")
+check(session.user_is_admin, "Login: Admin-Flag uebernommen")
+session.enter_admin()
+check(session.active_screen == 'AdminScreen', "Admin: Wechsel auf AdminScreen")
+session.leave_admin()
+check(session.active_screen == 'CheckoutScreen', "Admin: zurueck zum CheckoutScreen")
 check(session.balance == '5,00 €', "Login: Balance formatiert")
 check(len(items.items) == 2, "Login: Items geladen")
 check(checkout.state == 'hidden' and not checkout.is_open, "Login: Checkout-Dialog zu")
@@ -110,6 +116,9 @@ check(checkout.state == 'hidden' and not checkout.is_open, "Login: Checkout-Dial
 # 3. Artikel ohne Betätigung: Balance negativ -> no_funds
 session.on_tag('2222')
 check(session.username == 'User2222', "Tag-Wechsel: neuer User eingeloggt")
+check(not session.user_is_admin, "Tag-Wechsel: Nicht-Admin ohne Admin-Flag")
+session.enter_admin()
+check(session.active_screen == 'CheckoutScreen', "Nicht-Admin: kein Wechsel auf AdminScreen")
 item2 = items.items[1]
 item2.item.price = 100
 svc.currentUser.dispo = 0
@@ -149,6 +158,7 @@ check(svc.currentUser.tag_id == '2222', "Tag-Wechsel: Service-User gewechselt")
 session.logout()
 check(session.active_screen == 'LoginScreen', "Logout: zurueck auf LoginScreen")
 check(not session.user_logged_in, "Logout: user_logged_in geloescht")
+check(not session.user_is_admin, "Logout: Admin-Flag geloescht")
 check(svc.currentUser is None, "Logout: Service-User entfernt")
 check(session.username == 'UNBEKANNT', "Logout: Anzeige zurueckgesetzt")
 check(session.balance == '0,00 €', "Logout: Balance zurueckgesetzt")
