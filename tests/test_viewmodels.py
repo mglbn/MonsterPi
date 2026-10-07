@@ -3,6 +3,8 @@
 Ausführen: env/Scripts/python.exe tests/test_viewmodels.py
 """
 import sys
+import time
+
 sys.path.insert(0, 'src')
 
 from viewmodels import SessionViewModel
@@ -48,6 +50,8 @@ class FakeService:
         self.currentUser = None
         self.selectedItem = None
         self.currentUser = self.users.get(tag_id)
+        if self.currentUser:
+            self.currentUser.lastLogon = time.time()
         return self.currentUser
 
     def logout(self):
@@ -98,6 +102,7 @@ session.on_tag('1111')
 check(session.active_screen == 'CheckoutScreen', "Login: Screenwechsel zu CheckoutScreen")
 check(session.user_logged_in, "Login: user_logged_in gesetzt")
 check(session.username == 'User1111', "Login: Username angezeigt")
+check(svc.users['1111'].lastLogon > 0, "Login: lastLogon festgehalten")
 check(session.balance == '5,00 €', "Login: Balance formatiert")
 check(len(items.items) == 2, "Login: Items geladen")
 check(checkout.state == 'hidden' and not checkout.is_open, "Login: Checkout-Dialog zu")

@@ -20,6 +20,9 @@ class PurchaseService():
         self.selectedItem = None
         try:
             self.currentUser = User.get(tag_id=tag_id)
+            # letzten Login festhalten
+            self.currentUser.lastLogon = time.time()
+            self.currentUser.save()
             logger.info(f"User eingeloggt: {self.currentUser}")
         except User.DoesNotExist:
             logger.error(f"User existiert nicht: {tag_id}")
