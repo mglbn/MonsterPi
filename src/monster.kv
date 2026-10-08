@@ -5,6 +5,8 @@
     LoginScreen:
     CheckoutScreen:
     AdminScreen:
+    BalanceScreen:
+    StockScreen:
 
 
 <LoginScreen>:
@@ -53,6 +55,213 @@
             on_release: app.vm.session.logout()
 
 
+<UserRow>:
+    orientation: "horizontal"
+    Label:
+        text: root.name
+        size_hint_x: .5
+    Label:
+        text: root.balance_text
+        color: (1, .5, .5, 1) if root.balance_negative else (1, 1, 1, 1)
+        size_hint_x: .25
+    RoundedButton:
+        text: "Verwalten"
+        font_size: "20sp"
+        size_hint_x: .25
+        on_release: app.vm.session.stepper.open(root.user)
+
+
+<BalanceScreen>:
+    name: "BalanceScreen"
+    BoxLayout:
+        orientation: "vertical"
+        padding: 24
+        spacing: 12
+        Label:
+            text: "Guthaben verwalten"
+            font_size: "24sp"
+            size_hint_y: .08
+        RecycleView:
+            data: app.vm.admin.users
+            viewclass: "UserRow"
+            size_hint_y: .42
+            RecycleBoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                default_size_hint: 1, None
+                default_size: None, 64
+                spacing: 8
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 8
+            size_hint_y: .42
+            Label:
+                text: app.vm.session.stepper.username if app.vm.session.stepper.state == 'editing' else 'User auswählen'
+                size_hint_y: .2
+            Label:
+                text: app.vm.session.stepper.balance_text + '  ->  ' + app.vm.session.stepper.target_preview if app.vm.session.stepper.state == 'editing' else ''
+                font_size: "20sp"
+                size_hint_y: .24
+            GridLayout:
+                cols: 4
+                size_hint_y: .34
+                spacing: 8
+                RoundedButton:
+                    text: "-10 €"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.nudge(-1000)
+                RoundedButton:
+                    text: "-1 €"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.nudge(-100)
+                RoundedButton:
+                    text: "+1 €"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.nudge(100)
+                RoundedButton:
+                    text: "+10 €"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.nudge(1000)
+            BoxLayout:
+                spacing: 12
+                size_hint_y: .22
+                RoundedButton:
+                    text: "Zurücksetzen"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.reset()
+                RoundedButton:
+                    text: "Abbrechen"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.close()
+                RoundedButton:
+                    text: "Bestätigen"
+                    font_size: "20sp"
+                    disabled: not app.vm.session.stepper.confirmable
+                    on_release: app.vm.session.stepper.confirm()
+        Button:
+            text: "Zurück zum Menü"
+            font_size: "20sp"
+            size_hint_y: .08
+            on_release: app.vm.session.back_to_admin_menu()
+
+
+<ItemRow>:
+    orientation: "horizontal"
+    Label:
+        text: root.name
+        size_hint_x: .45
+    Label:
+        text: root.price_text
+        size_hint_x: .2
+    Label:
+        text: root.stock_text
+        size_hint_x: .2
+        color: (1, .5, .5, 1) if root.soldout else (1, 1, 1, 1)
+    RoundedButton:
+        text: "Verwalten"
+        font_size: "20sp"
+        size_hint_x: .15
+        on_release: app.vm.session.stock_stepper.open(root.item)
+
+
+<StockScreen>:
+    name: "StockScreen"
+    BoxLayout:
+        orientation: "vertical"
+        padding: 24
+        spacing: 12
+        Label:
+            text: "Lagerverwaltung"
+            font_size: "24sp"
+            size_hint_y: .08
+        RecycleView:
+            data: app.vm.stock.items
+            viewclass: "ItemRow"
+            size_hint_y: .42
+            RecycleBoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                default_size_hint: 1, None
+                default_size: None, 64
+                spacing: 8
+        BoxLayout:
+            orientation: "vertical"
+            spacing: 8
+            size_hint_y: .42
+            Label:
+                text: app.vm.session.stock_stepper.title if app.vm.session.stock_stepper.state == 'editing' else 'Artikel auswählen'
+                size_hint_y: .2
+            Label:
+                text: 'Bestand ' + app.vm.session.stock_stepper.stock_text + '  ->  ' + app.vm.session.stock_stepper.target_preview if app.vm.session.stock_stepper.state == 'editing' else ''
+                font_size: "20sp"
+                size_hint_y: .24
+            GridLayout:
+                cols: 6
+                size_hint_y: .34
+                spacing: 8
+                RoundedButton:
+                    text: "-10"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.nudge(-10)
+                RoundedButton:
+                    text: "-5"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.nudge(-5)
+                RoundedButton:
+                    text: "-1"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.nudge(-1)
+                RoundedButton:
+                    text: "+1"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.nudge(1)
+                RoundedButton:
+                    text: "+5"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.nudge(5)
+                RoundedButton:
+                    text: "+10"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.nudge(10)
+            BoxLayout:
+                spacing: 12
+                size_hint_y: .22
+                RoundedButton:
+                    text: "Zurücksetzen"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.reset()
+                RoundedButton:
+                    text: "Abbrechen"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stock_stepper.state != 'editing'
+                    on_release: app.vm.session.stock_stepper.close()
+                RoundedButton:
+                    text: "Bestätigen"
+                    font_size: "20sp"
+                    disabled: not app.vm.session.stock_stepper.confirmable
+                    on_release: app.vm.session.stock_stepper.confirm()
+        Button:
+            text: "Zurück zum Menü"
+            font_size: "20sp"
+            size_hint_y: .08
+            on_release: app.vm.session.back_to_admin_menu()
+
+
 <AdminScreen>:
     name: "AdminScreen"
     BoxLayout:
@@ -60,18 +269,26 @@
         padding: 24
         spacing: 12
         Label:
-            text: "Admin-Menue"
+            text: "Admin-Menü"
             font_size: "24sp"
-            size_hint_y: .1
-        Button:
+            size_hint_y: .15
+        RoundedButton:
             text: "Guthaben verwalten"
-            size_hint_y: .2
-            on_release: hint.text = "Guthaben verwalten: noch nicht implementiert"
-        Label:
-            id: hint
-            text: ""
-            size_hint_y: .1
+            font_size: "20sp"
+            size_hint_y: .18
+            on_release: app.vm.session.show_admin(app.vm.session.BALANCE_SCREEN)
+        RoundedButton:
+            text: "Lagerverwaltung"
+            font_size: "20sp"
+            size_hint_y: .18
+            on_release: app.vm.session.show_admin(app.vm.session.STOCK_SCREEN)
+        RoundedButton:
+            text: "Auswertung (folgt)"
+            font_size: "20sp"
+            size_hint_y: .18
+            disabled: True
         Button:
-            text: "Zurueck"
+            text: "Zurück zum Verkauf"
+            font_size: "20sp"
             size_hint_y: .1
             on_release: app.vm.session.leave_admin()

@@ -21,13 +21,13 @@ def init_db():
 def sync_schema(models=MODELS, database=db):
     """Neue Model-Felder als Spalten ins Schema nachziehen.
 
-    laeuft bei jedem Start: Felder, die am Model dazukommen, werden per
-    ALTER TABLE angelegt. Geloeschte oder umbenannte Felder werden
+    läuft bei jedem Start: Felder, die am Model dazukommen, werden per
+    ALTER TABLE angelegt. Gelöschte oder umbenannte Felder werden
     absichtlich nicht angefasst - eine Spalte ohne Feld bleibt einfach
-    stehen, sonst wuerden wir beim Start Kundendaten wegwerfen.
+    stehen, sonst würden wir beim Start Kundendaten wegwerfen.
 
     Achtung: neue Felder brauchen null=True oder default=..., sonst
-    schlaegt das ALTER auf Tabellen mit Daten fehl.
+    schlägt das ALTER auf Tabellen mit Daten fehl.
     """
     migrator = SchemaMigrator.from_database(database)
     for model in models:

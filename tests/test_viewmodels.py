@@ -79,6 +79,9 @@ class FakeService:
     def items_for_user(self, user):
         return list(self.items)
 
+    def all_users(self):
+        return list(self.users.values())
+
 
 def check(cond, msg):
     if not cond:
@@ -104,11 +107,11 @@ check(session.active_screen == 'CheckoutScreen', "Login: Screenwechsel zu Checko
 check(session.user_logged_in, "Login: user_logged_in gesetzt")
 check(session.username == 'User1111', "Login: Username angezeigt")
 check(svc.users['1111'].lastLogon > 0, "Login: lastLogon festgehalten")
-check(session.user_is_admin, "Login: Admin-Flag uebernommen")
+check(session.user_is_admin, "Login: Admin-Flag übernommen")
 session.enter_admin()
 check(session.active_screen == 'AdminScreen', "Admin: Wechsel auf AdminScreen")
 session.leave_admin()
-check(session.active_screen == 'CheckoutScreen', "Admin: zurueck zum CheckoutScreen")
+check(session.active_screen == 'CheckoutScreen', "Admin: zurück zum CheckoutScreen")
 check(session.balance == '5,00 €', "Login: Balance formatiert")
 check(len(items.items) == 2, "Login: Items geladen")
 check(checkout.state == 'hidden' and not checkout.is_open, "Login: Checkout-Dialog zu")
@@ -126,7 +129,7 @@ session.select_item(item2)
 check(checkout.state == 'no_funds', "Auswahl: no_funds bei zu wenig Guthaben")
 check(checkout.is_open, "Auswahl: Dialog offen")
 session.on_tag('2222')
-check(checkout.state == 'no_funds', "Bezahlversuch ohne Auswahl aendert nichts")
+check(checkout.state == 'no_funds', "Bezahlversuch ohne Auswahl ändert nichts")
 checkout.close()
 check(checkout.state == 'hidden' and not checkout.is_open, "close: Dialog wieder zu")
 svc.currentUser.dispo = -500
@@ -142,13 +145,13 @@ check(checkout.state == 'thanks', "Bezahlung: thanks nach Kauf")
 check(session.balance == '4,00 €', "Bezahlung: Balance aktualisiert")
 check(not item1.soldout, "Bezahlung: Bestand 5 -> 4, nicht ausverkauft")
 
-# Kauf des letzten Stuecks -> soldout
+# Kauf des letzten Stücks -> soldout
 item2 = items.items[1]
 session.select_item(item2)
 session.on_tag('1111')
-check(item2.soldout, "Bezahlung: soldout nach letztem Stueck (Bestand 1 -> 0)")
+check(item2.soldout, "Bezahlung: soldout nach letztem Stück (Bestand 1 -> 0)")
 
-# 5. Anderer Chip waehrend 'thanks' -> Logout + neuer Login, Dialog zu
+# 5. Anderer Chip während 'thanks' -> Logout + neuer Login, Dialog zu
 session.on_tag('2222')
 check(checkout.state == 'hidden', "Tag-Wechsel: Checkout-Dialog geschlossen")
 check(session.username == 'User2222', "Tag-Wechsel: zweiter User aktiv")
@@ -156,11 +159,11 @@ check(svc.currentUser.tag_id == '2222', "Tag-Wechsel: Service-User gewechselt")
 
 # 6. Expliziter Logout -> LoginScreen, Service leer
 session.logout()
-check(session.active_screen == 'LoginScreen', "Logout: zurueck auf LoginScreen")
-check(not session.user_logged_in, "Logout: user_logged_in geloescht")
-check(not session.user_is_admin, "Logout: Admin-Flag geloescht")
+check(session.active_screen == 'LoginScreen', "Logout: zurück auf LoginScreen")
+check(not session.user_logged_in, "Logout: user_logged_in gelöscht")
+check(not session.user_is_admin, "Logout: Admin-Flag gelöscht")
 check(svc.currentUser is None, "Logout: Service-User entfernt")
-check(session.username == 'UNBEKANNT', "Logout: Anzeige zurueckgesetzt")
-check(session.balance == '0,00 €', "Logout: Balance zurueckgesetzt")
+check(session.username == 'UNBEKANNT', "Logout: Anzeige zurückgesetzt")
+check(session.balance == '0,00 €', "Logout: Balance zurückgesetzt")
 
 print("\nALLE VM-TESTS BESTANDEN")

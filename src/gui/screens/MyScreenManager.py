@@ -10,5 +10,5 @@ class MyScreenManager(ScreenManager):
         session.bind(active_screen=self._on_screen)
 
     def _on_screen(self, session, screen):
-        self.transition.direction = 'left' if screen in ('CheckoutScreen', 'AdminScreen') else 'right'
+        self.transition.direction = 'left' if screen in ('CheckoutScreen', 'AdminScreen', 'BalanceScreen', 'StockScreen') else 'right'
         self.current = screen

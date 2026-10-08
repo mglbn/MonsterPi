@@ -10,6 +10,6 @@ class User(Basemodel):
     lastLogon = TimestampField()
     balance = IntegerField()
     dispo = IntegerField()
-    # default ist Pflicht, sonst schlaegt das schema-sync auf der gefuellten Tabelle fehl
+    # default ist Pflicht, sonst schlägt das schema-sync auf der gefüllten Tabelle fehl
     isAdmin = BooleanField(default=False)
 

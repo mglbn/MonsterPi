@@ -78,6 +78,54 @@ class PurchaseService():
         self.selectedItem = None
         return success
 
+    def all_items(self):
+        return list(Item.select().order_by(Item.brand, Item.flavor))
+
+    def adjust_stock(self, item: Item, delta: int) -> bool:
+        """Bestand eines Artikels um delta verändern, transaktional.
+
+        Gibt False zurück, wenn kein Artikel, kein Delta oder der
+        neue Bestand negativ wäre - dann wird nichts geschrieben.
+        """
+        if item is None or delta == 0:
+            return False
+
+        neu = item.inStock + delta
+        if neu < 0:
+            logger.error(f"Bestand würde negativ: {item} um {delta} auf {neu}")
+            return False
+
+        with db.atomic():
+            item.inStock = neu
+            item.save()
+
+        logger.info(f"Bestand angepasst: {item} um {delta} auf {neu}")
+        return True
+
+    def all_users(self):
+        return list(User.select().order_by(User.lastname, User.firstname))
+
+    def adjust_balance(self, user: User, delta: int) -> bool:
+        """Guthaben eines Users um delta (Cent) ändern, transaktional.
+
+        Gibt False zurück, wenn kein User, kein Betrag oder der neue
+        Stand unter dem Dispo läge - dann wird nichts geschrieben.
+        """
+        if user is None or delta == 0:
+            return False
+
+        neu = user.balance + delta
+        if neu < user.dispo:
+            logger.error(f"Dispo würde unterschritten: {user} um {delta} auf {neu}")
+            return False
+
+        with db.atomic():
+            user.balance = neu
+            user.save()
+
+        logger.info(f"Balance angepasst: {user} um {delta} auf {neu}")
+        return True
+
     def items_for_user(self, user: User):
         return (Item.select(Item)
             .join(Purchase, JOIN.LEFT_OUTER, on=

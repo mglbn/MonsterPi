@@ -4,6 +4,10 @@ from kivy.properties import StringProperty, BooleanProperty, NumericProperty, Li
 from helper import logger, convertCentsToString
 from viewmodels.checkout_vm import CheckoutViewModel
 from viewmodels.items_vm import ItemListViewModel
+from viewmodels.amount_stepper_vm import AmountStepperViewModel
+from viewmodels.admin_vm import AdminViewModel
+from viewmodels.stock_stepper_vm import StockStepperViewModel
+from viewmodels.stock_vm import StockViewModel
 
 PROGRESS_TICK = 1 / 20.
 
@@ -17,6 +21,11 @@ class SessionViewModel(EventDispatcher):
 
     GREET_DEFAULT = "Chip her!"
     NAME_DEFAULT = "UNBEKANNT"
+
+    ADMIN_MENU = "AdminScreen"
+    BALANCE_SCREEN = "BalanceScreen"
+    STOCK_SCREEN = "StockScreen"
+    ADMIN_SCREENS = (ADMIN_MENU, BALANCE_SCREEN, STOCK_SCREEN)
 
     active_screen = StringProperty("LoginScreen")
     user_logged_in = BooleanProperty(False)
@@ -34,6 +43,12 @@ class SessionViewModel(EventDispatcher):
         self.service = service
         self.checkout = checkout_vm or CheckoutViewModel()
         self.items = ItemListViewModel(self)
+        self.stepper = AmountStepperViewModel(service)
+        self.admin = AdminViewModel(service, self.stepper)
+        self.stock_stepper = StockStepperViewModel(service)
+        self.stock = StockViewModel(service, self.stock_stepper)
+        #hat der Admin am eingeloggten User gedreht: Balance-Anzeige aktualisieren
+        self.stepper.bind(on_applied=self._balance_applied)
         self.login_timeout = login_timeout
         self.login_error_timeout = login_error_timeout
         self._logout_event = None
@@ -64,6 +79,8 @@ class SessionViewModel(EventDispatcher):
     def logout(self):
         self.service.logout()
         self.checkout.close()
+        self.stepper.close()
+        self.stock_stepper.close()
         self._stop_login_timer()
         self._cancel_greet_error()
         self.user_logged_in = False
@@ -84,10 +101,30 @@ class SessionViewModel(EventDispatcher):
         if not self.user_is_admin:
             return
         self.checkout.close()
-        self.active_screen = "AdminScreen"
+        self.active_screen = self.ADMIN_MENU
+
+    def show_admin(self, screen):
+        """Zu einem Admin-Screen wechseln (Menü oder Untermenü)."""
+        if not self.user_is_admin or screen not in self.ADMIN_SCREENS:
+            return
+        if screen == self.BALANCE_SCREEN:
+            self.admin.load()
+        if screen == self.STOCK_SCREEN:
+            self.stock.load()
+        self.active_screen = screen
+
+    def back_to_admin_menu(self):
+        """Aus dem Untermenü zurück, offene Bearbeitung verwerfen."""
+        self.stepper.close()
+        self.stock_stepper.close()
+        self.active_screen = self.ADMIN_MENU
 
     def leave_admin(self):
         self.active_screen = "CheckoutScreen"
+
+    def _balance_applied(self, stepper, ok, user):
+        if ok and self.user_logged_in and self.service.currentUser is not None:
+            self._display_balance(self.service.currentUser)
 
     def _login(self, tag_id: str):
         user = self.service.login(tag_id)

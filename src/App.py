@@ -37,7 +37,11 @@ class MonsterApp(App):
         self.vm = SimpleNamespace(
             session=session_vm,
             checkout=session_vm.checkout,
-            items=session_vm.items
+            items=session_vm.items,
+            stepper=session_vm.stepper,
+            admin=session_vm.admin,
+            stock_stepper=session_vm.stock_stepper,
+            stock=session_vm.stock
         )
 
         #RFID-Callback kommt aus einem Nebenthread: in den Main-Thread marshallen
@@ -47,7 +51,7 @@ class MonsterApp(App):
         #jede Touch-Eingabe startet den Logout-Timer neu
         Window.bind(on_touch_down=lambda *args: session_vm.notify_activity())
 
-        #ModalView gehoert nicht in den Widget-Baum: open() haengt es an das Window
+        #ModalView gehört nicht in den Widget-Baum: open() hängt es an das Window
         self.checkoutModal = CheckoutModal(
             checkout=session_vm.checkout,
             size_hint=(.6, .8),

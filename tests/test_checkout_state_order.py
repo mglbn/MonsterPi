@@ -1,11 +1,11 @@
-"""Regression-Test fuer die Zuweisungsreihenfolge im CheckoutViewModel.
+"""Regression-Test für die Zuweisungsreihenfolge im CheckoutViewModel.
 
 Der CheckoutModal bindet nur auf state und liest dort synchron title,
-hint und hint_color. Die muessen also schon gesetzt sein, bevor state
-feuert - sonst ist der Hinweis beim ersten Oeffnen leer und haengt
+hint und hint_color. Die müssen also schon gesetzt sein, bevor state
+feuert - sonst ist der Hinweis beim ersten Öffnen leer und hängt
 danach immer einen Zustand hinterher.
 
-Ausfuehren: env/Scripts/python.exe tests/test_checkout_state_order.py
+Ausführen: env/Scripts/python.exe tests/test_checkout_state_order.py
 """
 import sys
 sys.path.insert(0, 'src')
@@ -14,7 +14,7 @@ from viewmodels.checkout_vm import CheckoutViewModel
 
 
 class FakeItemVM:
-    """Minimal-Stub: open() benoetigt nur flavor und price_text."""
+    """Minimal-Stub: open() benötigt nur flavor und price_text."""
     flavor = 'F1'
     price_text = '1,00 €'
 
@@ -50,10 +50,10 @@ check(seen[-1] == ('thanks', 'F1 - 1,00 €',
                   CheckoutViewModel.HINT_THANKS, (.5, 1, .5, 1)),
       "bought(): Danke-Hinweis beim state-Dispatch sichtbar")
 
-# 3. Dialog zu und ohne Guthaben erneut oeffnen -> no_funds mit neuem Hinweis
+# 3. Dialog zu und ohne Guthaben erneut öffnen -> no_funds mit neuem Hinweis
 vm.close()
 check(seen[-1] == ('hidden', 'F1 - 1,00 €', CheckoutViewModel.HINT_THANKS, (.5, 1, .5, 1)),
-      "close(): state zurueck auf hidden")
+      "close(): state zurück auf hidden")
 
 vm.open(FakeItemVM(), funds=False)
 check(seen[-1] == ('no_funds', 'F1 - 1,00 €',

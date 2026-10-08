@@ -4,7 +4,7 @@ from kivy.metrics import dp
 
 
 class RoundedButton(Button):
-    """Dunkler, abgerundeter Button - das Basis-Design fuer alle Kiosk-Buttons."""
+    """Dunkler, abgerundeter Button - das Basis-Design für alle Kiosk-Buttons."""
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
