@@ -1,6 +1,7 @@
 from kivy.event import EventDispatcher
 from kivy.properties import (OptionProperty, BooleanProperty, NumericProperty,
                              StringProperty, ObjectProperty)
+from helper import logger
 
 
 class StockStepperViewModel(EventDispatcher):
@@ -41,15 +42,18 @@ class StockStepperViewModel(EventDispatcher):
         self.delta = 0
         self.state = self.EDITING
         self._refresh()
+        logger.info(f"Admin bearbeitet Bestand von {self.title}")
 
     def nudge(self, step: int):
         if self.state != self.EDITING:
             return
         self.delta += step
         self._refresh()
+        logger.debug(f"Bestand {self.title}: Schritt {step:+d}, Delta {self.delta:+d}")
 
     def reset(self):
         if self.state == self.EDITING:
+            logger.debug(f"Bestands-Delta zurückgesetzt (war {self.delta:+d})")
             self.delta = 0
             self._refresh()
 
@@ -57,7 +61,13 @@ class StockStepperViewModel(EventDispatcher):
         if self.state != self.EDITING or not self.confirmable:
             return False
         item = self.item
+        logger.info(
+            f"Admin ändert Bestand von {item.brand} {item.flavor}: "
+            f"{item.inStock} -> {item.inStock + self.delta} ({self.delta:+d})"
+        )
         ok = self.service.adjust_stock(item, self.delta)
+        if not ok:
+            logger.warning("Bestandsänderung fehlgeschlagen")
         self.close()
         self.dispatch('on_applied', ok, item)
         return ok

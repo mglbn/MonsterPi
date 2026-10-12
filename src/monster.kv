@@ -77,10 +77,20 @@
         orientation: "vertical"
         padding: 24
         spacing: 12
-        Label:
-            text: "Guthaben verwalten"
-            font_size: "24sp"
+        FloatLayout:
             size_hint_y: .08
+            Label:
+                text: "Guthaben verwalten"
+                font_size: "24sp"
+                halign: "center"
+                size_hint: 1, 1
+                pos_hint: {"x": 0, "y": 0}
+            RoundedButton:
+                text: "Zurück"
+                font_size: "20sp"
+                size_hint: .15, .7
+                pos_hint: {"x": 0, "center_y": .5}
+                on_release: app.vm.session.back_to_admin_menu()
         RecycleView:
             data: app.vm.admin.users
             viewclass: "UserRow"
@@ -104,7 +114,7 @@
                 font_size: "20sp"
                 size_hint_y: .24
             GridLayout:
-                cols: 4
+                cols: 6
                 size_hint_y: .34
                 spacing: 8
                 RoundedButton:
@@ -112,6 +122,11 @@
                     font_size: "20sp"
                     disabled: app.vm.session.stepper.state != 'editing'
                     on_release: app.vm.session.stepper.nudge(-1000)
+                RoundedButton:
+                    text: "-5 €"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.nudge(-500)
                 RoundedButton:
                     text: "-1 €"
                     font_size: "20sp"
@@ -122,6 +137,11 @@
                     font_size: "20sp"
                     disabled: app.vm.session.stepper.state != 'editing'
                     on_release: app.vm.session.stepper.nudge(100)
+                RoundedButton:
+                    text: "+5 €"
+                    font_size: "20sp"
+                    disabled: app.vm.session.stepper.state != 'editing'
+                    on_release: app.vm.session.stepper.nudge(500)
                 RoundedButton:
                     text: "+10 €"
                     font_size: "20sp"
@@ -145,12 +165,6 @@
                     font_size: "20sp"
                     disabled: not app.vm.session.stepper.confirmable
                     on_release: app.vm.session.stepper.confirm()
-        Button:
-            text: "Zurück zum Menü"
-            font_size: "20sp"
-            size_hint_y: .08
-            on_release: app.vm.session.back_to_admin_menu()
-
 
 <ItemRow>:
     orientation: "horizontal"
@@ -177,10 +191,20 @@
         orientation: "vertical"
         padding: 24
         spacing: 12
-        Label:
-            text: "Lagerverwaltung"
-            font_size: "24sp"
+        FloatLayout:
             size_hint_y: .08
+            Label:
+                text: "Lagerverwaltung"
+                font_size: "24sp"
+                halign: "center"
+                size_hint: 1, 1
+                pos_hint: {"x": 0, "y": 0}
+            RoundedButton:
+                text: "Zurück"
+                font_size: "20sp"
+                size_hint: .15, .7
+                pos_hint: {"x": 0, "center_y": .5}
+                on_release: app.vm.session.back_to_admin_menu()
         RecycleView:
             data: app.vm.stock.items
             viewclass: "ItemRow"
@@ -255,12 +279,6 @@
                     font_size: "20sp"
                     disabled: not app.vm.session.stock_stepper.confirmable
                     on_release: app.vm.session.stock_stepper.confirm()
-        Button:
-            text: "Zurück zum Menü"
-            font_size: "20sp"
-            size_hint_y: .08
-            on_release: app.vm.session.back_to_admin_menu()
-
 
 <AdminScreen>:
     name: "AdminScreen"
@@ -268,10 +286,20 @@
         orientation: "vertical"
         padding: 24
         spacing: 12
-        Label:
-            text: "Admin-Menü"
-            font_size: "24sp"
+        FloatLayout:
             size_hint_y: .15
+            Label:
+                text: "Admin-Menü"
+                font_size: "24sp"
+                halign: "center"
+                size_hint: 1, 1
+                pos_hint: {"x": 0, "y": 0}
+            RoundedButton:
+                text: "Zurück"
+                font_size: "20sp"
+                size_hint: .12, .4
+                pos_hint: {"x": 0, "center_y": .5}
+                on_release: app.vm.session.leave_admin()
         RoundedButton:
             text: "Guthaben verwalten"
             font_size: "20sp"
@@ -287,8 +315,3 @@
             font_size: "20sp"
             size_hint_y: .18
             disabled: True
-        Button:
-            text: "Zurück zum Verkauf"
-            font_size: "20sp"
-            size_hint_y: .1
-            on_release: app.vm.session.leave_admin()

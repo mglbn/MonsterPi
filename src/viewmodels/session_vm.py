@@ -102,6 +102,7 @@ class SessionViewModel(EventDispatcher):
             return
         self.checkout.close()
         self.active_screen = self.ADMIN_MENU
+        logger.info(f"Admin-Modus betreten (User {self.username})")
 
     def show_admin(self, screen):
         """Zu einem Admin-Screen wechseln (Menü oder Untermenü)."""
@@ -112,15 +113,18 @@ class SessionViewModel(EventDispatcher):
         if screen == self.STOCK_SCREEN:
             self.stock.load()
         self.active_screen = screen
+        logger.info(f"Admin öffnet {screen}")
 
     def back_to_admin_menu(self):
         """Aus dem Untermenü zurück, offene Bearbeitung verwerfen."""
         self.stepper.close()
         self.stock_stepper.close()
         self.active_screen = self.ADMIN_MENU
+        logger.info("Admin zurück zum Admin-Menü")
 
     def leave_admin(self):
         self.active_screen = "CheckoutScreen"
+        logger.info("Admin-Modus verlassen")
 
     def _balance_applied(self, stepper, ok, user):
         if ok and self.user_logged_in and self.service.currentUser is not None:

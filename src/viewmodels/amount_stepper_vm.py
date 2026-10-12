@@ -1,7 +1,7 @@
 from kivy.event import EventDispatcher
 from kivy.properties import (OptionProperty, BooleanProperty, NumericProperty,
                              StringProperty, ObjectProperty)
-from helper import convertCentsToString
+from helper import logger, convertCentsToString
 
 
 class AmountStepperViewModel(EventDispatcher):
@@ -43,15 +43,18 @@ class AmountStepperViewModel(EventDispatcher):
         self.delta = 0
         self.state = self.EDITING
         self._refresh()
+        logger.info(f"Admin bearbeitet Guthaben von {self.username}")
 
     def nudge(self, step: int):
         if self.state != self.EDITING:
             return
         self.delta += step
         self._refresh()
+        logger.debug(f"Guthaben {self.username}: Schritt {step:+d}, Delta {self.delta:+d}")
 
     def reset(self):
         if self.state == self.EDITING:
+            logger.debug(f"Guthaben-Delta zurückgesetzt (war {self.delta:+d})")
             self.delta = 0
             self._refresh()
 
@@ -59,7 +62,13 @@ class AmountStepperViewModel(EventDispatcher):
         if self.state != self.EDITING or not self.confirmable:
             return False
         user = self.user
+        logger.info(
+            f"Admin ändert Guthaben von {user.firstname} {user.lastname}: "
+            f"{convertCentsToString(user.balance)} -> {convertCentsToString(user.balance + self.delta)} ({self.delta:+d} Cent)"
+        )
         ok = self.service.adjust_balance(user, self.delta)
+        if not ok:
+            logger.warning("Guthabenänderung fehlgeschlagen")
         self.close()
         self.dispatch('on_applied', ok, user)
         return ok
